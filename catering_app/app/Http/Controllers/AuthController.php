@@ -9,25 +9,35 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function Login (Request $request)
+    public function login(Request $request)
     {
         $email = $request->input('email');
         $password = $request->input('password');
-        
+
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $user = Auth::user();
-    
+
             // Cek peran (role) dari user
             if ($user->role == 'admin') {
-                return redirect()->route('admin');
+                return response()->json([
+                    'message' => 'Login berhasil',
+                    'redirect_url' => route('admin'),
+                    'user' => $user
+                ], 200);
             } elseif ($user->role == 'user') {
-                return redirect()->route('user');
+                return response()->json([
+                    'message' => 'Login berhasil',
+                    'redirect_url' => route('user'),
+                    'user' => $user
+                ], 200);
             }
         }
 
-        return redirect()->route('login')->with('error', 'Email atau Password Salah ! ');
-    
+        return response()->json([
+            'message' => 'Email atau Password Salah!',
+        ], 401);
     }
+
 
     public function pagelogin(){
         return view('auth.login');
@@ -38,26 +48,30 @@ class AuthController extends Controller
     }
 
     public function register(Request $request)
-    {
-        // Validasi input
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:5',
-        
-        ]);
+{
+    // Validasi input
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|unique:users',
+        'password' => 'required|string|min:5',
+    ]);
 
-        // Buat user baru
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'role' => 'user'
-        ]);
+    // Buat user baru
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => bcrypt($validated['password']),
+        'role' => 'admin'
+    ]);
 
-        // Redirect ke halaman login dengan pesan sukses
-        return redirect()->route('login')->with('success', 'Registrasi berhasil');
-    }
+    // Return response JSON
+    return response()->json([
+        'message' => 'Registrasi berhasil',
+        'user' => $user,
+        'redirect_url' => route('login'),
+    ], 201);
+}
+
 
     
 

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Pages / Login - NiceAdmin Bootstrap Template</title>
+  <title>Login -Catering App</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -28,6 +28,9 @@
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('niceadmin/assets/css/style.css') }}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
   <!-- =======================================================
   * Template Name: NiceAdmin
@@ -64,7 +67,7 @@
                     <p class="text-center small">Enter your username & password to login</p>
                   </div>
 
-                  <form action="{{ route('action_login') }}" method="post" class="row g-3 needs-validation" novalidate>
+                  <form  class="row g-3 needs-validation"  id="login-form" novalidate>
                     @csrf
 
                     <div class="col-12">
@@ -104,7 +107,7 @@
                 <!-- You can delete the links only if you purchased the pro version. -->
                 <!-- Licensing information: https://bootstrapmade.com/license/ -->
                 <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                Craft with <a href="https://bootstrapmade.com/">Heart</a>
               </div>
 
             </div>
@@ -130,6 +133,37 @@
 
   <!-- Template Main JS File -->
   <script src="{{ asset('niceadmin/assets/js/main.js') }}"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    
+    $(document).ready(function() {
+        $('#login-form').on('submit', function(event) {
+            event.preventDefault(); // Prevent normal form submission
+
+            $.ajax({
+                url: 'api/auth/login', // Update to point to API route
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    toastr.success(response.message);
+                    setTimeout(function() {
+                        window.location.href = response.redirect_url;
+                    }, 2000);
+                },
+                error: function(xhr) {
+                    if (xhr.status === 401) {
+                        toastr.error(xhr.responseJSON.message);
+                    } else {
+                        toastr.error('An error occurred. Please try again.');
+                    }
+                }
+            });
+        });
+    });
+  </script>
 
 </body>
 

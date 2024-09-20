@@ -25,6 +25,7 @@
   <link href="{{ asset('niceadmin/assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
   <link href="{{ asset('niceadmin/assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ asset('niceadmin/assets/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('niceadmin/assets/css/style.css') }}" rel="stylesheet">
@@ -39,6 +40,7 @@
 </head>
 
 <body>
+  @include('sweetalert::alert')
 
   <!-- ======= Header ======= -->
   @include('layout.header')
@@ -47,6 +49,8 @@
   @include('layout.sidebar')
   
   @yield('content')
+
+  @yield('js_section')
 
 
   @include('layout.footer')
